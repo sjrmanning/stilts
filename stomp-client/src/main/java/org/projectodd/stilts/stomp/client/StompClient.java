@@ -336,8 +336,11 @@ public class StompClient {
             throws InterruptedException, ExecutionException {
         StompControlFrame frame = new StompControlFrame( Command.SUBSCRIBE,
                 builder.getHeaders() );
-        String subscriptionId = getNextSubscriptionId();
-        frame.setHeader( Header.ID, subscriptionId );
+        String subscriptionId = frame.getHeader(Header.ID);
+        if (subscriptionId == null) {
+            subscriptionId = getNextSubscriptionId();
+        }
+        frame.setHeader(Header.ID, subscriptionId);
         ReceiptFuture future = sendFrame( frame );
         future.await();
         if (future.isError()) {
